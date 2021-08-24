@@ -1,11 +1,10 @@
 import json
 
-from ._meta import GModelMeta
 from ._manager import GModelManager
+from ._meta import GModelMeta
 
 
 class GModel(object, metaclass=GModelMeta):
-
 	manager = GModelManager
 
 	def __init__(self, data):

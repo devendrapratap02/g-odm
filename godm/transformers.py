@@ -37,11 +37,10 @@ def transform_tags_to_tags(value):
 	if start_index == -1 or end_index == -1 or start_index > end_index:
 		return value
 
-	list_as_string = value[start_index+1:end_index]
+	list_as_string = value[start_index + 1:end_index]
 	if not list_as_string:
 		return ""
 	list_split = list_as_string.split(",")
 	list_strip_quotes = [item.strip('"\'') for item in list_split]
 	list_filter_empty = list(filter(lambda item: not not item.strip(), list_strip_quotes))
 	return ",".join(list_filter_empty)
-
