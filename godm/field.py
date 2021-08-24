@@ -1,5 +1,4 @@
 import json
-
 from datetime import datetime
 from functools import update_wrapper, partial
 from typing import Callable
@@ -9,8 +8,7 @@ from .transformers import transform_invalid_ref_to_none, transform_na_to_none, t
 
 
 class Field(object):
-
-	class transform_decorator(object):
+	class TransformDecorator(object):
 		def __init__(self, decorated):
 			update_wrapper(self, decorated)
 			self.decorated = decorated
@@ -40,7 +38,7 @@ class Field(object):
 			return partial(self.__call__, obj)
 
 	def __init__(self, name: str = None, index: int = -1, allow_empty_or_null: bool = False, default_val: object = None,
-					pre_transform: list = None, post_transform: list = None, **others):
+	             pre_transform: list = None, post_transform: list = None, **others):
 
 		if not pre_transform or type(pre_transform) is not list:
 			pre_transform = []
@@ -119,7 +117,7 @@ class Field(object):
 
 class StringField(Field):
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 		transform_key = self._meta.get("name") + "_transform"
 		non_transform = self._meta.get("name")
@@ -152,7 +150,7 @@ class StringField(Field):
 
 class IntegerField(Field):
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 
 		value = super(IntegerField, self).get_value(data)
@@ -171,7 +169,7 @@ class IntegerField(Field):
 
 class DecimalField(Field):
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 		value = super(DecimalField, self).get_value(data)
 		if not value:
@@ -190,7 +188,7 @@ class DecimalField(Field):
 
 class BooleanField(Field):
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 		value = super(BooleanField, self).get_value(data)
 		if not value:
@@ -210,7 +208,7 @@ class DateField(Field):
 
 		super().__init__(**kwargs)
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 		value = super(DateField, self).get_value(data)
 		if not value:
@@ -237,7 +235,7 @@ class ListField(Field):
 
 		super(ListField, self).__init__(**kwargs)
 
-	@Field.transform_decorator
+	@Field.TransformDecorator
 	def get_value(self, data):
 		value = super(ListField, self).get_value(data)
 		if not value and self._meta.get("allow_empty_or_null"):
@@ -274,7 +272,8 @@ class ListField(Field):
 		item_type = self._meta.get("item_type")
 		if item_type not in [int, float, str]:
 			self._meta.setdefault("item_type", str)
-			print(f"Valid item_type options for ListFields are int, float, str, but given: {item_type}. Reset to default: str")
+			print(
+				f"Valid item_type options for ListFields are int, float, str, but given: {item_type}. Reset to default: str")
 
 
 class CustomField(Field):
