@@ -6,12 +6,12 @@ from gspread.client import Client
 from gspread.models import Spreadsheet
 
 _g_sheet: Client
-_worksheets = {}
+_worksheets: dict[str, Spreadsheet] = dict()
 
 ENV_SYSTEM_KEY_PATH = "GODM_AUTH_KEY_PATH"
 
 
-def authenticate(key_object: object = None, key_path: str = None):
+def authenticate(key_object: object = None, key_path: str = None) -> None:
 	"""Authenticates the access token against the Google Sheet API
 
 	Args:
@@ -49,7 +49,7 @@ def get_sheet(sheet_name: str) -> Spreadsheet:
 	return _worksheets.get(sheet_name)
 
 
-def load_sheet(sheet_name: str, alias: str = "default"):
+def load_sheet(sheet_name: str, alias: str = "default") -> None:
 	"""Load the Google Sheet object for later use. It creates the :class:`gspread.models.Spreadsheet` instance
 	and catches it along with alias name as well
 
