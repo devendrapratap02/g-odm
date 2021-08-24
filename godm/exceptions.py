@@ -2,7 +2,7 @@ class FieldException(Exception):
 	pass
 
 
-class EntityException(Exception):
+class ModelItemException(Exception):
 	pass
 
 
