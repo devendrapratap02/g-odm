@@ -5,7 +5,7 @@ import gspread
 from gspread.client import Client
 from gspread.models import Spreadsheet
 
-_g_sheet: Client
+_g_sheet: Client = None
 _worksheets: dict[str, Spreadsheet] = dict()
 
 ENV_SYSTEM_KEY_PATH = "GODM_AUTH_KEY_PATH"

@@ -151,7 +151,7 @@ class StringField(Field):
 class IntegerField(Field):
 
 	@Field.TransformDecorator
-	def get_value(self, data):
+	def get_value(self, data) -> int:
 
 		value = super(IntegerField, self).get_value(data)
 		if not value:
@@ -170,7 +170,7 @@ class IntegerField(Field):
 class DecimalField(Field):
 
 	@Field.TransformDecorator
-	def get_value(self, data):
+	def get_value(self, data) -> float:
 		value = super(DecimalField, self).get_value(data)
 		if not value:
 			if self._meta.get("allow_empty_or_null"):

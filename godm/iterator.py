@@ -1,12 +1,20 @@
+from typing import TYPE_CHECKING
+
 from .exceptions import InvalidIndexException
 
+if TYPE_CHECKING:
+	from ._manager import GModelManager
 
-class EntityIterator:
 
-	def __init__(self, manager, filter_list):
+class GIterator:
+
+	def __init__(self, manager: "GModelManager", filter_list: list):
 		self._manager = manager
 		self._filter_list = filter_list
 		self._start_index = 0
+
+	def __repr__(self):
+		return f"Model: <{self._manager.model.__name__}>. Items to iterate: {self._filter_list}. Current Position: {self._start_index}"
 
 	def __iter__(self):
 		return self

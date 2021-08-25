@@ -1,18 +1,26 @@
-from .exceptions import EntityException, FieldException
-from .iterator import EntityIterator
+from typing import TYPE_CHECKING
+
+import gspread
+
+from .exceptions import FieldException, ModelItemException
+from .iterator import GIterator
+
+if TYPE_CHECKING:
+	from .model import GModel
 
 
 class GModelManager(object):
 
-	def __init__(self, model):
+	def __init__(self, model: "GModel"):
 		self.model = model
 
 	def _filter_data_list(self, **kwargs):
-		all_data = getattr(self.model, "_data")
-		headers = getattr(self.model, "_headers")
+		class_meta = getattr(self.model, "Meta")
+		header_index: int = getattr(class_meta, "header_index")
+		all_data: gspread.Worksheet = getattr(self.model, "_data")
+		headers: list = getattr(self.model, "_headers")
 		meta = getattr(self.model, "_meta")
 
-		all_data_list = [i for i in range(all_data.row_count)]
 		filter_data_list = []
 
 		for key, val in list(kwargs.items()):
@@ -21,13 +29,14 @@ class GModelManager(object):
 			key_name = getattr(field, "_meta", {}).get("name")
 			local_index = headers.index(key_name) + 1
 
-			column_values = all_data.col_values(local_index)
-			for index in all_data_list:
-				value = column_values[index]
-				if val == value:
-					filter_data_list.append(index + 1)
+			print(all_data.get_all_records(head=header_index))
 
-			all_data_list = filter_data_list
+			godm_column_values = all_data.col_values(local_index)
+			print(local_index, godm_column_values)
+
+			for index, column_value in enumerate(godm_column_values):
+				if val == column_value:
+					filter_data_list.append(index + 1)
 
 		return filter_data_list
 
@@ -71,7 +80,7 @@ class GModelManager(object):
 		print(filter_data_list)
 
 		if len(filter_data_list) == 0:
-			raise EntityException(f"Unable to find Entity {self.model}, {kwargs}")
+			raise ModelItemException(f"Unable to find Entity {self.model}, {kwargs}")
 
 		model_data = self._get_data_from_id(filter_data_list[0])
 
@@ -79,9 +88,8 @@ class GModelManager(object):
 
 	def filter(self, **kwargs):
 		filter_data_list = self._filter_data_list(**kwargs)
-		print(filter_data_list)
 
-		return EntityIterator(self, filter_data_list)
+		return GIterator(self, filter_data_list)
 
 	def get_entity_from_id(self, row_index):
 		model_data = self._get_data_from_id(row_index)
