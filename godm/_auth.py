@@ -21,12 +21,13 @@ def authenticate(key_object: object = None, key_path: str = None) -> None:
 	If none of the parameters are passed, it will look for ENV variable named GODM_AUTH_KEY_PATH to look for file path
 	"""
 
+	global _g_sheet
+
 	if not key_object or not isinstance(key_object, object):
 		if not key_path or not os.path.exists(key_path):
 			key_path = os.environ.get(ENV_SYSTEM_KEY_PATH)
 			key_object = json.load(open(key_path))
 
-	global _g_sheet
 	_g_sheet = gspread.service_account_from_dict(key_object)
 
 
