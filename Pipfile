@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-gspread = "*"
+gspread = "==4.0.1"
 oauth2client = "*"
 
 [dev-packages]
