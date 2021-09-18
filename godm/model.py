@@ -1,5 +1,5 @@
 import json
-
+import datetime
 from ._manager import GModelManager
 from ._meta import GModelMeta
 
@@ -27,6 +27,8 @@ class GModel(object, metaclass=GModelMeta):
 		data["id"] = getattr(self, "id")
 		for key in _meta:
 			val = getattr(self, key, None)
+			if isinstance(val, datetime.datetime):
+				val = str(val)
 			data[key] = val
 
 		return data
