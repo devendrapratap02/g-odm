@@ -16,7 +16,7 @@ def read(filename):
 	return open(os.path.join(os.path.dirname(__file__), filename)).read()
 
 
-version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', read('gspread/__init__.py'), re.MULTILINE).group(1)
+version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', read('godm/__init__.py'), re.MULTILINE).group(1)
 
 setup(
 	name="godm",
