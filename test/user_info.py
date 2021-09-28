@@ -1,3 +1,4 @@
+import json
 from godm.field import StringField, IntegerField, DateField
 from godm.model import GModel
 
@@ -19,3 +20,5 @@ a.first()
 a.last()
 
 b = Users.manager.get(age="29")
+
+json.dumps()

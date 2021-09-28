@@ -219,7 +219,8 @@ class DateField(Field):
 
 		date_format = self._meta.get("date_format", DateField.MM_DD_YYYY)
 		try:
-			datetime.strptime(value, date_format)
+			format_val = datetime.strptime(value, date_format)
+			value = format_val
 		except ValueError:
 			raise FieldException("Invalid Date Format: {}".format(value))
 		else:
