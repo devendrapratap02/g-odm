@@ -1,7 +1,9 @@
 import json
 from datetime import datetime
 from functools import update_wrapper, partial
+import re
 from typing import Callable
+from unicodedata import name
 
 from .exceptions import FieldException
 from .transformers import transform_invalid_ref_to_none, transform_na_to_none, transform_tags_to_tags
@@ -52,6 +54,10 @@ class Field(object):
 			"post_transform": post_transform,
 			**others
 		})
+
+	@property
+	def name(self):
+		return self._meta.get("name")
 
 	def get_value(self, data):
 		transform_key = self._meta.get("name") + "_transform"
@@ -114,6 +120,10 @@ class Field(object):
 
 		return json.dumps(data)
 
+	def match_value(self, search_value, data_value, operator):
+		print(f"No match implementation found. Going default equal check. {self.name}")
+		return search_value == data_value
+
 
 class StringField(Field):
 
@@ -147,6 +157,13 @@ class StringField(Field):
 
 		return str(value)
 
+	def match_value(self, search_value, data_value, operator):
+		if operator == "eq":
+			return search_value == data_value
+		elif operator == "ct":
+			return search_value in data_value
+
+		print(f"Invalid operator passed {operator} for field {self.name}")
 
 class IntegerField(Field):
 
@@ -165,6 +182,21 @@ class IntegerField(Field):
 			raise
 		else:
 			return int(value)
+
+	def match_value(self, search_value, data_value, operator):
+		data_value = int(data_value)
+		if operator == "eq":
+			return search_value == data_value
+		elif operator == "lt":
+			return search_value < data_value
+		elif operator == "lte":
+			return search_value <= data_value
+		elif operator == "gt":
+			return search_value > data_value
+		elif operator == "gte":
+			return search_value >= data_value
+
+		print(f"Invalid operator passed {operator} for field {self.name}")
 
 
 class DecimalField(Field):
@@ -185,6 +217,21 @@ class DecimalField(Field):
 		else:
 			return value
 
+	def match_value(self, search_value, data_value, operator):
+		data_value = float(data_value)
+		if operator == "eq":
+			return search_value == data_value
+		elif operator == "lt":
+			return search_value < data_value
+		elif operator == "lte":
+			return search_value <= data_value
+		elif operator == "gt":
+			return search_value > data_value
+		elif operator == "gte":
+			return search_value >= data_value
+
+		print(f"Invalid operator passed {operator} for field {self.name}")
+
 
 class BooleanField(Field):
 
@@ -196,8 +243,14 @@ class BooleanField(Field):
 				return self._meta.get("default_val")
 			else:
 				FieldException("null or empty was found and no default is set")
-		return type(value) is str and value.lower() == "true"
+		return type(value) is str and self.convert_to_val(value.lower)
 
+	def convert_to_val(self, value):
+		return any(key == value for key in ("t", "true", "ok", "yes", "y", "1"))
+
+	def match_value(self, search_value, data_value, operator):
+		data_value = self.convert_to_val(data_value.lower())
+		return search_value == data_value
 
 class DateField(Field):
 	DD_MM_YYYY = "%d/%m/%Y"

@@ -15,7 +15,12 @@ class GModelManager(object):
 	def __init__(self, model: "GModel"):
 		self.model = model
 
+	def _get_header_index(self):
+		class_meta = getattr(self.model, "Meta")
+		return getattr(class_meta, "header_index")
+
 	def _filter_data_list(self, **kwargs):
+		header_index = self._get_header_index()
 		all_data: gspread.Worksheet = getattr(self.model, "_data")
 		headers: list = getattr(self.model, "_headers")
 		meta:dict[str, "Field"] = getattr(self.model, "_meta")
@@ -23,15 +28,20 @@ class GModelManager(object):
 		filter_data_list = []
 
 		for key, val in list(kwargs.items()):
+			if "__" in key:
+				field_key, operator = key.split("__")
+			else:
+				field_key, operator = key, "eq"
 			filter_data_list = []
-			field = meta.get(key)
+			field:Field = meta.get(field_key)
 			key_name = getattr(field, "_meta", {}).get("name")
 			local_index = headers.index(key_name) + 1
 
 			godm_column_values = all_data.col_values(local_index)
 
-			for index, column_value in enumerate(godm_column_values):
-				if val == column_value:
+			for index, column_value in enumerate(godm_column_values[header_index:]):
+				index += header_index
+				if field.match_value(val, column_value, operator):
 					filter_data_list.append(index + 1)
 
 		return filter_data_list
