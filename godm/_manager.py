@@ -6,6 +6,7 @@ from .exceptions import FieldException, ModelItemException
 from .iterator import GIterator
 
 if TYPE_CHECKING:
+	from .field import Field
 	from .model import GModel
 
 
@@ -15,11 +16,9 @@ class GModelManager(object):
 		self.model = model
 
 	def _filter_data_list(self, **kwargs):
-		class_meta = getattr(self.model, "Meta")
-		header_index: int = getattr(class_meta, "header_index")
 		all_data: gspread.Worksheet = getattr(self.model, "_data")
 		headers: list = getattr(self.model, "_headers")
-		meta = getattr(self.model, "_meta")
+		meta:dict[str, "Field"] = getattr(self.model, "_meta")
 
 		filter_data_list = []
 
@@ -29,10 +28,7 @@ class GModelManager(object):
 			key_name = getattr(field, "_meta", {}).get("name")
 			local_index = headers.index(key_name) + 1
 
-			print(all_data.get_all_records(head=header_index))
-
 			godm_column_values = all_data.col_values(local_index)
-			print(local_index, godm_column_values)
 
 			for index, column_value in enumerate(godm_column_values):
 				if val == column_value:
@@ -77,7 +73,6 @@ class GModelManager(object):
 	def get(self, **kwargs):
 
 		filter_data_list = self._filter_data_list(**kwargs)
-		print(filter_data_list)
 
 		if len(filter_data_list) == 0:
 			raise ModelItemException(f"Unable to find Entity {self.model}, {kwargs}")
