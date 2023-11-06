@@ -1,5 +1,4 @@
 import json
-from xmlrpc.client import Boolean
 from godm.field import BooleanField, StringField, IntegerField, DateField
 from godm.model import GModel
 
@@ -11,9 +10,9 @@ class Users(GModel):
 	is_family = BooleanField(name="Family")
 
 	class Meta:
-		sheet_name = "Test Sheet"
+		sheet_name = "Test Sheet - GODM"
 		tab_name = "Users"
-		header_index = 4
+		header_index = 1
 
 
 a = Users.manager.filter(is_family=True)

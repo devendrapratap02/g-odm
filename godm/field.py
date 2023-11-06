@@ -127,6 +127,11 @@ class Field(object):
 
 class StringField(Field):
 
+	def __init__(self, **kwargs):
+		kwargs.setdefault("datatype", str)
+
+		super().__init__(**kwargs)
+
 	@Field.TransformDecorator
 	def get_value(self, data):
 		transform_key = self._meta.get("name") + "_transform"
@@ -167,6 +172,11 @@ class StringField(Field):
 
 class IntegerField(Field):
 
+	def __init__(self, **kwargs):
+		kwargs.setdefault("datatype", int)
+
+		super().__init__(**kwargs)
+
 	@Field.TransformDecorator
 	def get_value(self, data) -> int:
 
@@ -200,6 +210,11 @@ class IntegerField(Field):
 
 
 class DecimalField(Field):
+    
+	def __init__(self, **kwargs):
+		kwargs.setdefault("datatype", float)
+
+		super().__init__(**kwargs)
 
 	@Field.TransformDecorator
 	def get_value(self, data) -> float:
@@ -234,6 +249,11 @@ class DecimalField(Field):
 
 
 class BooleanField(Field):
+    
+	def __init__(self, **kwargs):
+		kwargs.setdefault("datatype", bool)
+
+		super().__init__(**kwargs)
 
 	@Field.TransformDecorator
 	def get_value(self, data):
@@ -257,6 +277,7 @@ class DateField(Field):
 	MM_DD_YYYY = "%m/%d/%Y"
 
 	def __init__(self, date_format: str = MM_DD_YYYY, **kwargs):
+		kwargs.setdefault("datatype", str)
 		kwargs.setdefault("date_format", date_format)
 
 		super().__init__(**kwargs)
@@ -283,6 +304,7 @@ class DateField(Field):
 class ListField(Field):
 
 	def __init__(self, delimiter: str = ",", item_type: object = str, **kwargs):
+		kwargs.setdefault("datatype", list[item_type])
 		kwargs.setdefault("delimiter", delimiter)
 		kwargs.setdefault("item_type", item_type)
 		kwargs.setdefault("pre_transform", [transform_tags_to_tags])

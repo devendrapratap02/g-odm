@@ -18,6 +18,9 @@ def read(filename):
 
 version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', read('godm/__init__.py'), re.MULTILINE).group(1)
 
+def get_requirements():
+    return [r.strip("\n") for r in open("requirements.txt").readlines()]
+
 setup(
 	name="godm",
 	version=version,
@@ -26,9 +29,7 @@ setup(
 	author="Devendra Pratap Singh",
 	author_email="dps.manit@gmail.com",
 	keywords=["spreadsheets", "google-spreadsheets", "object-data-model"],
-	install_requires=[
-		"gspread>=4.0.1"
-	],
+	install_requires=get_requirements(),
 	python_requires=">=3.4",
 	license="MIT",
 	packages=["godm"],

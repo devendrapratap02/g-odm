@@ -2,11 +2,9 @@ import json
 import os
 
 import gspread
-from gspread.client import Client
-from gspread.models import Spreadsheet
 
-_g_sheet: Client = None
-_worksheets: dict[str, Spreadsheet] = dict()
+_g_sheet = None
+_worksheets = dict()
 
 ENV_SYSTEM_KEY_PATH = "GODM_AUTH_KEY_PATH"
 
@@ -31,7 +29,7 @@ def authenticate(key_object: object = None, key_path: str = None) -> None:
 	_g_sheet = gspread.service_account_from_dict(key_object)
 
 
-def get_sheet(sheet_name: str) -> Spreadsheet:
+def get_sheet(sheet_name: str):
 	"""Fetches the Google Sheet object from already cached list or else creates the new object and store in catch
 
 	Args:
