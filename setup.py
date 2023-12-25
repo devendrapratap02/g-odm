@@ -2,10 +2,7 @@ import os
 import re
 import sys
 
-try:
-	from setuptools import setup
-except ImportError:
-	from distutils.core import setup
+from setuptools import find_packages, setup
 
 if sys.argv[-1] == "publish":
 	os.system("python setup.py sdist bdist_wheel")
@@ -32,6 +29,6 @@ setup(
 	install_requires=get_requirements(),
 	python_requires=">=3.4",
 	license="MIT",
-	packages=["godm"],
+	packages=find_packages(),
 	zip_safe=False
 )
