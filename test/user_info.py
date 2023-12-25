@@ -1,6 +1,6 @@
-import json
 from godm.field import BooleanField, StringField, IntegerField, DateField
 from godm.model import GModel
+from godm._manager import LoadPolicy
 
 
 class Users(GModel):
@@ -13,8 +13,8 @@ class Users(GModel):
 		sheet_name = "Test Sheet - GODM"
 		tab_name = "Users"
 		header_index = 1
+		load_policy = LoadPolicy.LAZY
 
-
-a = Users.manager.filter(is_family=True)
-b = Users.manager.filter(age__lt=30)
-c = Users.manager.get(name="Devendra")
+# a = Users.manager.filter(is_family=True)
+# b = Users.manager.filter(age__lt=30)
+# c = Users.manager.get(name="Devendra")

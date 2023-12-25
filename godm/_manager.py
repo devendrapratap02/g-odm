@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import gspread
+from enum import Enum
 
 from .exceptions import FieldException, ModelItemException
 from .iterator import GIterator
@@ -9,11 +10,28 @@ if TYPE_CHECKING:
 	from .field import Field
 	from .model import GModel
 
+class LoadPolicy(Enum):
+    INIT = "init"
+    LAZY = "lazy"
 
 class GModelManager(object):
 
-	def __init__(self, model: "GModel"):
+	def __init__(self, model: "GModel", setup_attrs:Callable):
+		model_meta = getattr(model, "Meta")
+		self.load_policy = getattr(model_meta, "load_policy")
 		self.model = model
+		self.setup = False
+		self.__setup_attrs = setup_attrs
+  
+		print(f"load_policy: {self.load_policy}")
+
+		if self.load_policy == LoadPolicy.INIT:
+			self._setup_attrs()
+
+	def _setup_attrs(self, reload = False):
+		if not self.setup or reload:
+			self.__setup_attrs()
+			self.setup = True
 
 	def _get_header_index(self):
 		class_meta = getattr(self.model, "Meta")
@@ -80,7 +98,15 @@ class GModelManager(object):
 			"fields": fields
 		}
 
-	def get(self, **kwargs) -> GModel:
+	def reload_model(self):
+		self._setup_attrs(reload=True)
+
+	def initialise_model(self):
+		if self.load_policy == LoadPolicy.LAZY:
+			self._setup_attrs()
+
+	def get(self, **kwargs) -> "GModel":
+		self._setup_attrs()
 
 		filter_data_list = self._filter_data_list(**kwargs)
 
@@ -92,10 +118,14 @@ class GModelManager(object):
 		return self.model(model_data)
 
 	def filter(self, **kwargs):
+		self._setup_attrs()
+
 		filter_data_list = self._filter_data_list(**kwargs)
 
 		return GIterator(self, filter_data_list)
 
 	def get_entity_from_id(self, row_index):
+		self._setup_attrs()
+
 		model_data = self._get_data_from_id(row_index)
 		return self.model(model_data)
