@@ -1,6 +1,6 @@
-from godm.field import BooleanField, StringField, IntegerField, DateField
+from godm import LoadPolicy
+from godm.field import BooleanField, DateField, IntegerField, StringField
 from godm.model import GModel
-from godm._manager import LoadPolicy
 
 
 class Users(GModel):

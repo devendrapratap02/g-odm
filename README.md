@@ -6,9 +6,10 @@ It can be very tedious to read data from various sheets and requires similar kin
 ## Example
 
 ```python
-from godm.field import BooleanField, StringField, IntegerField, DateField
+from godm import LoadPolicy
+from godm.field import BooleanField, DateField, IntegerField, StringField
 from godm.model import GModel
-from godm._manager import LoadPolicy
+
 
 class Users(GModel):
     name = StringField(name="Name")
