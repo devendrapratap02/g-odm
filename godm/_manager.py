@@ -80,7 +80,7 @@ class GModelManager(object):
 			"fields": fields
 		}
 
-	def get(self, **kwargs):
+	def get(self, **kwargs) -> GModel:
 
 		filter_data_list = self._filter_data_list(**kwargs)
 

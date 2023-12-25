@@ -18,6 +18,7 @@ class GModelMeta(type):
 
 			cls._meta = {}
 			cls._errors = {}
+			cls_annotations = {}
 			for attr, obj in list(attrs.items()):
 				# if not attr.startswith("__") and attr != "Meta" and not hasattr(obj, "__call__"):
 				if isinstance(obj, Field):
@@ -30,6 +31,8 @@ class GModelMeta(type):
 						print(ex)
 					else:
 						cls._meta[attr] = obj
+					cls_annotations[attr] = str
 			setattr(cls, "manager", GModelManager(cls))
+			setattr(cls, "__annotations__", cls_annotations)
 
 		return cls

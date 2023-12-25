@@ -17,3 +17,4 @@ class Users(GModel):
 
 a = Users.manager.filter(is_family=True)
 b = Users.manager.filter(age__lt=30)
+c = Users.manager.get(name="Devendra")
