@@ -1,9 +1,7 @@
 import json
 from datetime import datetime
 from functools import update_wrapper, partial
-import re
 from typing import Callable
-from unicodedata import name
 
 from .exceptions import FieldException
 from .transformers import transform_invalid_ref_to_none, transform_na_to_none, transform_tags_to_tags
@@ -42,10 +40,10 @@ class Field(object):
 	def __init__(self, name: str = None, index: int = -1, allow_empty_or_null: bool = False, default_val: object = None,
 	             pre_transform: list = None, post_transform: list = None, **others):
 
-		if not pre_transform or type(pre_transform) is not list:
+		if not pre_transform or not isinstance(pre_transform, list):
 			pre_transform = []
 
-		if not post_transform or type(post_transform) is not list:
+		if not post_transform or not isinstance(post_transform, list):
 			post_transform = []
 
 		self._meta = dict({
@@ -82,9 +80,9 @@ class Field(object):
 		field_checks = []
 		if not name and not index:
 			raise FieldException("No attributes are provided")
-		if type(name) is not str:
+		if isinstance(name, str):
 			field_checks.append("name attr value is not string")
-		if type(index) is not int:
+		if isinstance(name, int):
 			field_checks.append("index attr value is not int")
 
 		if len(field_checks) == 2:
@@ -112,7 +110,7 @@ class Field(object):
 		data = dict()
 		for field_name, field_itself in self._meta.items():
 			field_value = field_itself.__name__ if type(field_itself).__name__ == "type" else field_itself
-			if type(field_itself) is list:
+			if isinstance(field_itself, list):
 				field_value = []
 				for transform in field_itself:
 					field_value.append(transform.__name__)
@@ -263,7 +261,7 @@ class BooleanField(Field):
 				return self._meta.get("default_val")
 			else:
 				FieldException("null or empty was found and no default is set")
-		return type(value) is str and self.convert_to_val(value.lower)
+		return isinstance(value, str) and self.convert_to_val(value.lower)
 
 	def convert_to_val(self, value):
 		return any(key == value for key in ("t", "true", "ok", "yes", "y", "1"))

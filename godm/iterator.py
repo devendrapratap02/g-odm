@@ -27,7 +27,7 @@ class GIterator:
 		raise StopIteration
 
 	def __getitem__(self, index):
-		if type(index) is not int or index < 0 or index >= len(self._filter_list):
+		if not isinstance(index, int)or index < 0 or index >= len(self._filter_list):
 			raise InvalidIndexException()
 		return self._manager.get_entity_from_id(self._filter_list[index])
 

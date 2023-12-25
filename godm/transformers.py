@@ -1,6 +1,6 @@
 def transform_to_lower_case(value) -> str:
 	return_value = value
-	if value and type(value) is str:
+	if value and isinstance(value, str):
 		return_value = value.lower()
 
 	return return_value
